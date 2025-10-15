@@ -1,0 +1,100 @@
+---Department wise which employee earning highest salry ---
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where emp_sal = (select max(emp_sal) from emps)
+
+
+
+----Corelated SUb Query ----
+--Dispaly Department wise who is earning highest slary ---
+--A correlated subquery refers to a query that depends on values from the outer query. F
+--or each row processed by the outer query, the subquery is executed.
+--It is often used to compare rows in the outer query with the inner query.
+---Department wise which employee earning highest salry ---
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where emp_sal = (select max(emp_sal)
+                from emps i
+                where i.dept_id = d.dept_id)
+
+--Manufacturer wise which product having highest cost----
+select m_name,p_name
+from manufactures m inner join product p
+on m.m_code = p.m_code
+where p_price = (select max(p_price)
+from product i
+where i.m_code = m.m_code)
+
+---Manufatcurer name,p_name,avg price of each manufacturer
+select m_name,p_name,(select avg(p_price) from product i where m.m_code= i.m_code)
+from manufactures m inner join product p
+on m.m_code = p.m_code                                   
+                
+                
+                
+---Department wise  who earning lowest salry ---
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where emp_sal = (select min(emp_sal)
+                from emps i
+                where i.dept_id = d.dept_id)
+
+
+--Department wise who is getting greater than avg salry in their department--
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where emp_sal > (select avg(emp_sal)
+                from emps i
+                where i.dept_id = d.dept_id)
+
+
+
+
+       
+--Not Exists Subquery:
+--The Not EXISTS subquery checks for the not existence of rows returned by the inner query.
+--which department we dont have employess---
+
+select dept_name
+from department
+where dept_id not in (select distinct dept_id from emps)
+
+select dept_name,emp_name
+from department d left join emps e
+on d.dept_id = e.dept_id
+where emp_name is null
+
+select dept_name
+from department d
+where not exists (select * from emps i where i.dept_id = d.dept_id)
+
+
+--Exists Subquery:--display which are the department we have employees
+--The EXISTS subquery checks for the existence of rows returned by the inner query.
+select dept_name
+from department d
+where exists (select * from emps i where i.dept_id = d.dept_id)
+
+
+
+----MULTI COLUMN SUB QUERY -----
+--department wise who is earning highest salary---
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where (dept_name,emp_sal) in (select dept_name,max(emp_sal)
+from department d inner join emps e
+on d.dept_id = e.dept_id
+group by dept_name)
+--Lowest---
+select dept_name,emp_name
+from department d inner join emps e
+on d.dept_id = e.dept_id
+where (dept_name,emp_sal) in (select dept_name,min(emp_sal)
+from department d inner join emps e
+on d.dept_id = e.dept_id
+group by dept_name)
